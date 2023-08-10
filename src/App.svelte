@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<header>
+<header class="bg-blue-300 absolute w-full flex justify-between px-4 py-4">
     <h1>H3 Bingo</h1>
     <!-- Create Nav Component -->
     <nav>
@@ -9,18 +9,70 @@
     </nav>
 </header>
 
-<main>
-    <section id="bingo-card" />
+<main class="bg-pink-400 h-screen pt-14 flex justify-center items-center">
+    <section id="bingo-card" class="bg-white">Hello</section>
 </main>
 
 <!-- Create Nav Component -->
-<nav>
+<nav class="hidden">
     <button>Menu</button>
 </nav>
 
-<footer>
-    <a href="https://github.com/throast/h3-bingo">Code available on GitHub</a>
-    <a href="#stripe-checkout-unsure">
-        Buy me some Gamer Supps or Teddy Fresh &lt;3
+<footer class="bg-yellow-300 flex flex-col items-center py-16">
+    <h2 class="text-xl mb-12">The 100% Genuinely Unofficial H3 Bingo Game</h2>
+    <p class="mb-4">Inspired by:</p>
+    <p class="mb-4">
+        <a href="#TODO">H3 Podcast</a>
+    </p>
+    <p class="mb-4">
+        <a href="#TODO">H3 Hater Bingo Card created by NAME HERE</a>
+    </p>
+    <p class="mb-4">
+        <a href="#TODO">jacksfilms Ssniperwolf Bingo</a> (bingo card created by
+        <a href="#TODO">NAME HERE</a>)
+    </p>
+    <p class="mb-12"><a href="#TODO">Bingo Bakery</a></p>
+    <a class="mb-4" href="https://github.com/throast/h3-bingo">
+        Code available on GitHub.com/throast/h3-bingo
+    </a>
+    <a class="mb-4" href="#stripe-checkout-unsure">
+        <span class="wiggle inline-block pr-1.5">
+            <span class="inline-block rotate-180 relative top-0.5">3</span>&gt;
+        </span>
+        Buy me some Gamer Supps or Teddy Fresh
+        <span class="wiggle inline-block pl-1.5"> &lt;3 </span>
     </a>
 </footer>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    a {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    a:hover {
+        /* text-decoration: underline dashed; */
+        box-shadow: 0 0.25em 0 0 black;
+    }
+    @keyframes wiggle {
+        0%,
+        100% {
+            transform: scale(1);
+        }
+        25% {
+            transform: rotate(20deg) scale(1.4);
+        }
+        50% {
+            transform: scale(1);
+        }
+        75% {
+            transform: rotate(-20deg) scale(1.4);
+        }
+    }
+
+    .wiggle {
+        animation: wiggle 2s linear infinite;
+    }
+</style>
