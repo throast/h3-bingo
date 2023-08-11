@@ -1,2 +1,1 @@
-# h3-bingo
-H3 Podcast Bingo
+# The 100% Genuinely Unofficial H3 Podcast Bingo
