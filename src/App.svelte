@@ -1,11 +1,12 @@
 <script lang="ts">
+    let thing = "stuff"
 </script>
 
 <header class="bg-blue-300 absolute w-full flex justify-between px-4 py-4">
     <h1>H3 Bingo</h1>
     <!-- Create Nav Component -->
     <nav>
-        <button>Menu</button>
+        <button>Menu {thing}</button>
     </nav>
 </header>
 
