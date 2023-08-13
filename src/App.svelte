@@ -4,7 +4,7 @@
     import Menu from "./lib/Menu.svelte";
 </script>
 
-<h1 class="absolute text-2xl pl-4 pt-4">H3 Bingo</h1>
+<h1 class="absolute text-3xl pl-4 pt-4">H3 Bingo</h1>
 
 <Game />
 
