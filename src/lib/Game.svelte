@@ -1,36 +1,39 @@
 <script lang="ts">
     import { nanoid } from "nanoid";
     import defaultSquares from "./data/default-squares.json";
+    import { randomValue, shuffledArray } from "./utils";
 
-    const randomValue = (min: number, max: number) => {
-        return Math.random() * (max - min) + min;
+    type Mark = {
+        opacity: number;
+        size: string;
+        top: string;
+        left: string;
     };
 
-    // size: randomValue(5, 6) + "rem",
-    // top: randomValue(0.5, 1.5) + "rem",
-    // left: randomValue(0.5, 1.5) + "rem",
+    type Square = {
+        id: string;
+        name: string;
+        marked: boolean;
+        marks: Mark[];
+    };
+
     const generateMarks = () => {
-        let marks = [];
-        for (let i = 0; i < randomValue(3, 5); i++) {
+        let marks: Mark[] = [];
+        for (let i = 0; i < randomValue(4, 7); i++) {
             marks.push({
                 opacity: randomValue(0.2, 0.4),
                 size: randomValue(65, 80) + "%",
-                top: randomValue(5, 15) + "%",
-                left: randomValue(5, 15) + "%",
+                top: randomValue(5, 20) + "%",
+                left: randomValue(5, 20) + "%",
             });
         }
         return marks;
     };
 
-    const markSquare = (square: {
-        name: string;
-        marked: boolean;
-        id: string;
-        marks: any[];
-    }) => {
+    const markSquare = (square: Square) => {
         square.marked = !square.marked;
         let duplicateMarkIndex = 0;
-        game = game.map((sq, i) => {
+        game = game.map((sq) => {
             if (sq.name === square.name) {
                 if (square.marked && !sq.marked) {
                     duplicateMarkIndex++;
@@ -53,19 +56,7 @@
         return "sup";
     };
 
-    const shuffledArray = <T>(array: T[]): T[] => {
-        const shuffledArray = [...array];
-        for (let i = shuffledArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledArray[i], shuffledArray[j]] = [
-                shuffledArray[j],
-                shuffledArray[i],
-            ];
-        }
-        return shuffledArray;
-    };
-
-    const newGame = (size: number, squares: string[]) => {
+    const newGame = (size: number, squares: string[]): Square[] => {
         squares = [...squares];
         if (squares.length < size ** 2) {
             let delta = size ** 2 - squares.length;
@@ -86,14 +77,17 @@
             });
     };
 
-    let size = 6;
+    let size = 5;
     let loadedSquares = defaultSquares.squares;
     let game = newGame(size, loadedSquares);
 </script>
 
-<section class="bg-white flex flex-col border-solid border-2 border-black">
+<section
+    id="card"
+    class="bg-white flex flex-col border-solid border-2 border-black"
+>
     {#each Array(size) as _, row}
-        <div class="flex">
+        <div class="flex h-full">
             {#each game.slice(row * size, (row + 1) * size) as square (square.id)}
                 <div
                     on:click={() => markSquare(square)}
@@ -101,7 +95,7 @@
                     tabindex="0"
                     role="switch"
                     aria-checked={square.marked}
-                    class="square relative cursor-pointer flex justify-center items-center border-solid border-2 border-black"
+                    class="w-full h-full relative cursor-pointer flex justify-center items-center border-solid border-2 border-black"
                 >
                     <p>{square.name}</p>
                     {#each square.marks as mark}
@@ -118,12 +112,14 @@
 </section>
 
 <style lang="postcss">
-    .square {
-        width: 8rem;
-        height: 8rem;
-        @media screen and (min-width: 768px) and (max-height: 500px) {
-            width: 6rem;
-            height: 6rem;
+    #card {
+        @media (max-aspect-ratio: 1/1) {
+            width: 90vw;
+            height: 90vw;
+        }
+        @media (min-aspect-ratio: 1/1) {
+            width: 90vh;
+            height: 90vh;
         }
     }
     .unmarked {
