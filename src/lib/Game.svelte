@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { nanoid, random } from "nanoid";
+    import { nanoid } from "nanoid";
     import defaultSquares from "./data/default-squares.json";
 
     const randomValue = (min: number, max: number) => {
@@ -76,30 +76,28 @@
     let game = newGame(size, loadedSquares);
 </script>
 
-<main class="bg-pink-400 h-screen pt-12 flex justify-center items-center">
-    <section class="bg-white flex flex-col border-solid border-2 border-black">
-        {#each Array(size) as _, row}
-            <div class="flex">
-                {#each game.slice(row * size, (row + 1) * size) as square (square.id)}
-                    <div
-                        on:click={() => markSquare(square)}
-                        on:keydown={handleSquareKeys}
-                        tabindex="0"
-                        role="switch"
-                        aria-checked={square.marked}
-                        class="relative w-32 h-32 cursor-pointer flex justify-center items-center border-solid border-2 border-black"
-                    >
-                        <p>{square.name}</p>
-                        {#each square.marks as mark}
-                            <div
-                                class:hidden={!square.marked}
-                                class="bg-red-500 absolute rounded-full"
-                                style="opacity: {mark.opacity}; width: {mark.size}; height: {mark.size}; top: {mark.top}; left: {mark.left}; filter: blur(3px)"
-                            />
-                        {/each}
-                    </div>
-                {/each}
-            </div>
-        {/each}
-    </section>
-</main>
+<section class="bg-white flex flex-col border-solid border-2 border-black">
+    {#each Array(size) as _, row}
+        <div class="flex">
+            {#each game.slice(row * size, (row + 1) * size) as square (square.id)}
+                <div
+                    on:click={() => markSquare(square)}
+                    on:keydown={handleSquareKeys}
+                    tabindex="0"
+                    role="switch"
+                    aria-checked={square.marked}
+                    class="relative w-32 h-32 cursor-pointer flex justify-center items-center border-solid border-2 border-black"
+                >
+                    <p>{square.name}</p>
+                    {#each square.marks as mark}
+                        <div
+                            class:hidden={!square.marked}
+                            class="bg-red-500 absolute rounded-full"
+                            style="opacity: {mark.opacity}; width: {mark.size}; height: {mark.size}; top: {mark.top}; left: {mark.left}; filter: blur(3px)"
+                        />
+                    {/each}
+                </div>
+            {/each}
+        </div>
+    {/each}
+</section>
