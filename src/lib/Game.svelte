@@ -8,9 +8,9 @@
 
     const generateMarks = () => {
         let marks = [];
-        for (let i = 0; i < randomValue(3, 6); i++) {
+        for (let i = 0; i < randomValue(3, 5); i++) {
             marks.push({
-                opacity: randomValue(0.2, 0.5),
+                opacity: randomValue(0.1, 0.5),
                 size: randomValue(5, 6) + "rem",
                 top: randomValue(0.5, 1.5) + "rem",
                 left: randomValue(0.5, 1.5) + "rem",
@@ -71,15 +71,13 @@
             });
     };
 
-    let size = 6;
+    let size = 4;
     let loadedSquares = defaultSquares.squares;
     let game = newGame(size, loadedSquares);
 </script>
 
 <main class="bg-pink-400 h-screen pt-12 flex justify-center items-center">
-    <section
-        class="bg-red-300 flex flex-col border-solid border-2 border-black"
-    >
+    <section class="bg-white flex flex-col border-solid border-2 border-black">
         {#each Array(size) as _, row}
             <div class="flex">
                 {#each game.slice(row * size, (row + 1) * size) as square (square.id)}
