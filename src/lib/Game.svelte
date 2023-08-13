@@ -6,14 +6,17 @@
         return Math.random() * (max - min) + min;
     };
 
+    // size: randomValue(5, 6) + "rem",
+    // top: randomValue(0.5, 1.5) + "rem",
+    // left: randomValue(0.5, 1.5) + "rem",
     const generateMarks = () => {
         let marks = [];
         for (let i = 0; i < randomValue(3, 5); i++) {
             marks.push({
-                opacity: randomValue(0.1, 0.5),
-                size: randomValue(5, 6) + "rem",
-                top: randomValue(0.5, 1.5) + "rem",
-                left: randomValue(0.5, 1.5) + "rem",
+                opacity: randomValue(0.2, 0.4),
+                size: randomValue(65, 80) + "%",
+                top: randomValue(5, 15) + "%",
+                left: randomValue(5, 15) + "%",
             });
         }
         return marks;
@@ -26,9 +29,21 @@
         marks: any[];
     }) => {
         square.marked = !square.marked;
-        game = game.map((sq) => {
+        let duplicateMarkIndex = 0;
+        game = game.map((sq, i) => {
             if (sq.name === square.name) {
-                sq.marked = square.marked;
+                if (square.marked && !sq.marked) {
+                    duplicateMarkIndex++;
+                    setTimeout(() => {
+                        sq.marked = square.marked;
+                        game = [...game];
+                    }, 300 * duplicateMarkIndex);
+                } else if (!square.marked) {
+                    sq.marked = square.marked;
+                    setTimeout(() => {
+                        sq.marks = generateMarks();
+                    }, 0);
+                }
             }
             return sq;
         });
@@ -71,7 +86,7 @@
             });
     };
 
-    let size = 4;
+    let size = 6;
     let loadedSquares = defaultSquares.squares;
     let game = newGame(size, loadedSquares);
 </script>
@@ -86,13 +101,13 @@
                     tabindex="0"
                     role="switch"
                     aria-checked={square.marked}
-                    class="relative w-32 h-32 cursor-pointer flex justify-center items-center border-solid border-2 border-black"
+                    class="square relative cursor-pointer flex justify-center items-center border-solid border-2 border-black"
                 >
                     <p>{square.name}</p>
                     {#each square.marks as mark}
                         <div
-                            class:hidden={!square.marked}
-                            class="bg-red-500 absolute rounded-full"
+                            class:unmarked={!square.marked}
+                            class="bg-red-500 absolute rounded-full transition-opacity duration-200"
                             style="opacity: {mark.opacity}; width: {mark.size}; height: {mark.size}; top: {mark.top}; left: {mark.left}; filter: blur(3px)"
                         />
                     {/each}
@@ -101,3 +116,17 @@
         </div>
     {/each}
 </section>
+
+<style lang="postcss">
+    .square {
+        width: 8rem;
+        height: 8rem;
+        @media screen and (min-width: 768px) and (max-height: 500px) {
+            width: 6rem;
+            height: 6rem;
+        }
+    }
+    .unmarked {
+        opacity: 0 !important;
+    }
+</style>
