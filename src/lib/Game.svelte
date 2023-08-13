@@ -1,9 +1,37 @@
 <script lang="ts">
+    import { nanoid, random } from "nanoid";
     import defaultSquares from "./data/default-squares.json";
 
-    const markSquare = (square: { name: string; marked: boolean }) => {
+    const randomValue = (min: number, max: number) => {
+        return Math.random() * (max - min) + min;
+    };
+
+    const generateMarks = () => {
+        let marks = [];
+        for (let i = 0; i < randomValue(3, 6); i++) {
+            marks.push({
+                opacity: randomValue(0.2, 0.5),
+                size: randomValue(5, 6) + "rem",
+                top: randomValue(0.5, 1.5) + "rem",
+                left: randomValue(0.5, 1.5) + "rem",
+            });
+        }
+        return marks;
+    };
+
+    const markSquare = (square: {
+        name: string;
+        marked: boolean;
+        id: string;
+        marks: any[];
+    }) => {
         square.marked = !square.marked;
-        game = [...game];
+        game = game.map((sq) => {
+            if (sq.name === square.name) {
+                sq.marked = square.marked;
+            }
+            return sq;
+        });
     };
 
     const handleSquareKeys = (e: Event) => {
@@ -23,6 +51,7 @@
     };
 
     const newGame = (size: number, squares: string[]) => {
+        squares = [...squares];
         if (squares.length < size ** 2) {
             let delta = size ** 2 - squares.length;
             for (let i = 0; i < delta; i++) {
@@ -33,13 +62,18 @@
         return shuffledArray(squares)
             .slice(0, size ** 2)
             .map((square) => {
-                return { name: square, marked: false };
+                return {
+                    name: square,
+                    marked: false,
+                    id: nanoid(),
+                    marks: generateMarks(),
+                };
             });
     };
 
-    let size = 4;
-    let squares = defaultSquares.squares;
-    let game = newGame(size, squares);
+    let size = 6;
+    let loadedSquares = defaultSquares.squares;
+    let game = newGame(size, loadedSquares);
 </script>
 
 <main class="bg-pink-400 h-screen pt-12 flex justify-center items-center">
@@ -48,17 +82,23 @@
     >
         {#each Array(size) as _, row}
             <div class="flex">
-                {#each game.slice(row * size, (row + 1) * size) as square}
+                {#each game.slice(row * size, (row + 1) * size) as square (square.id)}
                     <div
                         on:click={() => markSquare(square)}
                         on:keydown={handleSquareKeys}
                         tabindex="0"
                         role="switch"
                         aria-checked={square.marked}
-                        class="relative w-32 h-32 flex justify-center items-center border-solid border-2 border-black"
+                        class="relative w-32 h-32 cursor-pointer flex justify-center items-center border-solid border-2 border-black"
                     >
                         <p>{square.name}</p>
-                        <div>{square.marked}</div>
+                        {#each square.marks as mark}
+                            <div
+                                class:hidden={!square.marked}
+                                class="bg-red-500 absolute rounded-full"
+                                style="opacity: {mark.opacity}; width: {mark.size}; height: {mark.size}; top: {mark.top}; left: {mark.left}; filter: blur(3px)"
+                            />
+                        {/each}
                     </div>
                 {/each}
             </div>
