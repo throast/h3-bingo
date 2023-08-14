@@ -56,7 +56,7 @@
         return "sup";
     };
 
-    const newGame = (size: number, squares: string[]): Square[] => {
+    const generateGame = (size: number, squares: string[]): Square[] => {
         squares = [...squares];
         if (squares.length < size ** 2) {
             let delta = size ** 2 - squares.length;
@@ -89,16 +89,25 @@
     };
 
     const toggleSettings = (e: Event) => {
-        if ((e.target as HTMLElement).closest("nav")) {
+        if ((e.target as HTMLElement).closest("menu")) {
             return;
         }
         showSettings = !showSettings;
     };
 
-    let showSettings = true;
+    const changeSize = (e: Event) => {
+        const newSize = parseInt((e.target as HTMLInputElement).value);
+        const newGame = generateGame(newSize, squares);
+        setTimeout(() => {
+            size = newSize;
+            game = newGame;
+        }, 0);
+    };
+
+    let showSettings = false;
     let size = 5;
     let squares = defaultSquares.squares;
-    let game = newGame(size, squares);
+    let game = generateGame(size, squares);
 </script>
 
 <section
@@ -137,22 +146,35 @@
     <img src="/settings.svg" alt="Settings icon" />
 
     {#if showSettings}
-        <nav
+        <menu
             class="flex flex-col absolute bottom-16 left-0 bg-white border-solid border-2 border-black rounded py-1"
         >
-            <button
-                on:click={resetGame}
-                class="px-1 py-1 border-solid border-b-2 border-black"
-            >
-                Reset
-            </button>
-            <button on:click={shuffleGame} class="px-1 py-1">Shuffle</button>
-        </nav>
+            <li class="px-1 py-1 border-solid border-b-2 border-black">
+                <input
+                    value={size}
+                    on:change={changeSize}
+                    id="size"
+                    name="size"
+                    type="number"
+                    step="1"
+                    min="3"
+                    max="7"
+                    class="pl-5"
+                />
+            </li>
+            <li class="px-1 py-1 border-solid border-b-2 border-black">
+                <button on:click={resetGame}> Reset </button>
+            </li>
+            <li class="px-1 py-1">
+                <button on:click={shuffleGame}> Shuffle </button>
+            </li>
+        </menu>
     {/if}
 </button>
 
 <style lang="postcss">
     #card {
+        box-shadow: inset 0 0 0 2px black;
         @media (max-aspect-ratio: 1/1) {
             width: 90vw;
             height: 90vw;
