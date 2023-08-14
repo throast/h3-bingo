@@ -19,7 +19,7 @@
 
     const generateMarks = () => {
         let marks: Mark[] = [];
-        for (let i = 0; i < randomValue(4, 7); i++) {
+        for (let i = 0; i < randomValue(4, 6); i++) {
             marks.push({
                 opacity: randomValue(0.2, 0.4),
                 size: randomValue(65, 80) + "%",
@@ -32,6 +32,7 @@
 
     const markSquare = (square: Square) => {
         square.marked = !square.marked;
+        bingoCheck();
         let duplicateMarkIndex = 0;
         game = game.map((sq) => {
             if (sq.name === square.name) {
@@ -40,9 +41,11 @@
                     setTimeout(() => {
                         sq.marked = square.marked;
                         game = [...game];
+                        bingoCheck();
                     }, 300 * duplicateMarkIndex);
                 } else if (!square.marked) {
                     sq.marked = square.marked;
+                    bingoCheck();
                     setTimeout(() => {
                         sq.marks = generateMarks();
                     }, 0);
@@ -82,10 +85,12 @@
             square.marked = false;
             return square;
         });
+        bingoCheck();
     };
 
     const shuffleGame = () => {
         game = shuffledArray(game);
+        bingoCheck();
     };
 
     const toggleSettings = (e: Event) => {
@@ -101,17 +106,101 @@
         setTimeout(() => {
             size = newSize;
             game = newGame;
+            bingoCheck();
         }, 0);
     };
 
+    const isRowFilled = (rowIndex: number) => {
+        for (let colIndex = 0; colIndex < size; colIndex++) {
+            if (!game[rowIndex * size + colIndex].marked) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const isColFilled = (colIndex: number) => {
+        for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+            if (!game[rowIndex * size + colIndex].marked) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const bingoCheck = () => {
+        let bingos = 0;
+        for (let i = 0; i < size; i++) {
+            if (isRowFilled(i)) {
+                bingos++;
+            }
+            if (isColFilled(i)) {
+                bingos++;
+            }
+        }
+        bingoCount = bingos;
+        if (bingoCount === 0) {
+            showBingo = false;
+            prevBingoCount = 0;
+            setTimeout(() => {
+                bingoMessage = "no bingos here...";
+            }, 300);
+            return;
+        }
+        showBingo = true;
+        bingoAnimation();
+        if (bingoCount === 1) {
+            bingoMessage = "Bingo!";
+        } else if (bingoCount === size * 2) {
+            bingoMessage = "Ultimate Bingo!";
+            ultimateBingoAnimation();
+        } else if (bingoCount > 1) {
+            bingoMessage = `Bingo! x${bingoCount}`;
+        }
+    };
+
+    const bingoAnimation = () => {
+        if (!bingoAnimating && bingoCount !== prevBingoCount) {
+            bingoAnimating = true;
+            prevBingoCount = bingoCount;
+            setTimeout(() => {
+                bingoAnimating = false;
+            }, 1000);
+        }
+    };
+
+    const ultimateBingoAnimation = () => {
+        if (!ultimateBingoAnimating) {
+            ultimateBingoAnimating = true;
+            setTimeout(() => {
+                ultimateBingoAnimating = false;
+            }, 1000);
+        }
+    };
+
     let showSettings = false;
+    let showBingo = false;
+    let bingoAnimating = false;
+    let ultimateBingoAnimating = false;
     let size = 5;
     let squares = defaultSquares.squares;
     let game = generateGame(size, squares);
+    let bingoCount = 0;
+    let prevBingoCount = 0;
+    let bingoMessage = "no bingos here...";
 </script>
 
+<h2
+    id="bingo-msg"
+    class:no-bingo={!showBingo}
+    class:bingo={bingoAnimating}
+    class="text-6xl mb-6 z-30 transition-all duration-600 linear"
+>
+    {bingoMessage}
+</h2>
 <section
     id="card"
+    class:ultimate={ultimateBingoAnimating}
     class="bg-white flex flex-col border-solid border-2 border-black"
 >
     {#each Array(size) as _, row}
@@ -175,14 +264,45 @@
 <style lang="postcss">
     #card {
         box-shadow: inset 0 0 0 2px black;
-        @media (max-aspect-ratio: 1/1) {
-            width: 90vw;
-            height: 90vw;
+        /* Portrait ratios */
+        @media (max-aspect-ratio: 10/12) {
+            width: 96vw;
+            height: 96vw;
         }
-        @media (min-aspect-ratio: 1/1) {
-            width: 90vh;
-            height: 90vh;
+        /* Landscape ratios */
+        @media (min-aspect-ratio: 10/12) {
+            width: 80vh;
+            height: 80vh;
         }
+    }
+    @keyframes bingo {
+        0%,
+        100% {
+            transform: scale(1);
+        }
+        25% {
+            transform: scale(0.7);
+        }
+        75% {
+            transform: scale(1.4);
+        }
+    }
+    .bingo {
+        animation: bingo 1s;
+    }
+    @keyframes ultimate {
+        0% {
+            transform: scale(1);
+        }
+        25% {
+            transform: scale(0.7);
+        }
+        75% {
+            transform: scale(1.2);
+        }
+    }
+    .ultimate {
+        animation: ultimate 1s infinite alternate;
     }
     .unmarked {
         opacity: 0 !important;
@@ -190,5 +310,9 @@
     #settings-button {
         bottom: 1rem;
         left: 1rem;
+    }
+    .no-bingo {
+        opacity: 0;
+        transform: translateY(-5rem);
     }
 </style>
