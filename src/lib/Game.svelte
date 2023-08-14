@@ -78,9 +78,24 @@
     };
 
     const resetGame = () => {
-        game = newGame(size, squares);
+        game = game.map((square) => {
+            square.marked = false;
+            return square;
+        });
     };
 
+    const shuffleGame = () => {
+        game = shuffledArray(game);
+    };
+
+    const toggleSettings = (e: Event) => {
+        if ((e.target as HTMLElement).closest("nav")) {
+            return;
+        }
+        showSettings = !showSettings;
+    };
+
+    let showSettings = true;
     let size = 5;
     let squares = defaultSquares.squares;
     let game = newGame(size, squares);
@@ -114,18 +129,27 @@
         </div>
     {/each}
 </section>
-<button id="settings-button w-5 h-5">
-    <img src="/settings.svg" alt="Settings icon" />
-</button>
-
-<!-- <nav
-    class="flex flex-col absolute bg-white border-solid border-4 border-l-0 border-black rounded-tr rounded-br py-1"
+<button
+    id="settings-button"
+    on:click={toggleSettings}
+    class="absolute w-16 h-16 bg-white rounded-full p-2 border-solid border-2 border-black"
 >
-    <button class="px-1 py-1 border-solid border-b-4 border-black">
-        Settings
-    </button>
-    <button on:click={resetGame} class="px-1 py-1"> Reset </button>
-</nav> -->
+    <img src="/settings.svg" alt="Settings icon" />
+
+    {#if showSettings}
+        <nav
+            class="flex flex-col absolute bottom-16 left-0 bg-white border-solid border-2 border-black rounded py-1"
+        >
+            <button
+                on:click={resetGame}
+                class="px-1 py-1 border-solid border-b-2 border-black"
+            >
+                Reset
+            </button>
+            <button on:click={shuffleGame} class="px-1 py-1">Shuffle</button>
+        </nav>
+    {/if}
+</button>
 
 <style lang="postcss">
     #card {
@@ -142,7 +166,7 @@
         opacity: 0 !important;
     }
     #settings-button {
-        top: 10rem;
-        left: 0;
+        bottom: 1rem;
+        left: 1rem;
     }
 </style>
