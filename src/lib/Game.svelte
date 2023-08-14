@@ -77,9 +77,13 @@
             });
     };
 
+    const resetGame = () => {
+        game = newGame(size, squares);
+    };
+
     let size = 5;
-    let loadedSquares = defaultSquares.squares;
-    let game = newGame(size, loadedSquares);
+    let squares = defaultSquares.squares;
+    let game = newGame(size, squares);
 </script>
 
 <section
@@ -110,6 +114,18 @@
         </div>
     {/each}
 </section>
+<button id="settings-button w-5 h-5">
+    <img src="/settings.svg" alt="Settings icon" />
+</button>
+
+<!-- <nav
+    class="flex flex-col absolute bg-white border-solid border-4 border-l-0 border-black rounded-tr rounded-br py-1"
+>
+    <button class="px-1 py-1 border-solid border-b-4 border-black">
+        Settings
+    </button>
+    <button on:click={resetGame} class="px-1 py-1"> Reset </button>
+</nav> -->
 
 <style lang="postcss">
     #card {
@@ -124,5 +140,9 @@
     }
     .unmarked {
         opacity: 0 !important;
+    }
+    #settings-button {
+        top: 10rem;
+        left: 0;
     }
 </style>
