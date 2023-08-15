@@ -1,7 +1,7 @@
 <script lang="ts">
     import { nanoid } from "nanoid";
     import defaultSquares from "./data/default-squares.json";
-    import { randomValue, shuffledArray } from "./utils";
+    import { randomValue, shuffledArray, swapArrayItems } from "./utils";
 
     type Mark = {
         opacity: number;
@@ -31,6 +31,9 @@
     };
 
     const markSquare = (square: Square) => {
+        if (square.name === "FREE") {
+            return;
+        }
         square.marked = !square.marked;
         bingoCheck();
         let duplicateMarkIndex = 0;
@@ -68,7 +71,7 @@
                 squares.push(squares[j]);
             }
         }
-        return shuffledArray(squares)
+        let newGame = shuffledArray(squares)
             .slice(0, size ** 2)
             .map((square) => {
                 return {
@@ -78,18 +81,38 @@
                     marks: generateMarks(),
                 };
             });
+        if (newGame.length % 2 !== 0) {
+            newGame[(newGame.length - 1) / 2] = {
+                name: "FREE",
+                marked: true,
+                id: nanoid(),
+                marks: generateMarks(),
+            };
+        }
+        return newGame;
     };
 
     const resetGame = () => {
         game = game.map((square) => {
-            square.marked = false;
+            if (square.name !== "FREE") {
+                square.marked = false;
+            }
             return square;
         });
         bingoCheck();
     };
 
     const shuffleGame = () => {
-        game = shuffledArray(game);
+        if (game.length % 2 === 0) {
+            game = shuffledArray(game);
+        } else {
+            const shuffledGame = shuffledArray(game);
+            game = swapArrayItems(
+                shuffledGame,
+                (shuffledGame.length - 1) / 2,
+                shuffledGame.findIndex((square) => square.name === "FREE")
+            );
+        }
         bingoCheck();
     };
 

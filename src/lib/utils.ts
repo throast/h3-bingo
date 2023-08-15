@@ -14,3 +14,11 @@ export const shuffledArray = <T>(array: T[]): T[] => {
     }
     return shuffledArray;
 };
+
+export const swapArrayItems = <T>(array: T[], indexA: number, indexB: number): T[] => {
+    const newArray = [...array];
+    const temp = newArray[indexA];
+    newArray[indexA] = newArray[indexB];
+    newArray[indexB] = temp;
+    return newArray
+}
